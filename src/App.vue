@@ -51,6 +51,7 @@
   <!-- Animating with JS - functions defined in methods object -->
   <!-- Web Animations API - https://developer.mozilla.org/en-US/docs/Web/API/Element/animate -->
   <!-- :css-"false" tells Vue that don't check for CSS animation skip to use JS animation -->
+  <!-- if using both CSS and JS we can remove 'done' in enter and leave function and Vue will use the CSS duration -->
   <transition
     @before-enter="beforeEnter"
     @enter="enter"
@@ -60,11 +61,10 @@
     @after-leave="afterLeave"
     @enter-cancelled="enterCancelled"
     @leave-cancelled="leaveCancelled"
-
-    :css="false"  
-    
+    :css="true"
+    name="woola"
   >
-    <h2 v-if="flag">Animating with JS</h2>
+    <h2 v-if="flag">Animating with JS & CSS</h2>
   </transition>
 </template>
 
@@ -105,21 +105,8 @@ export default {
     beforeEnter(el) {
       console.log("before enter event fired");
     },
-    enter(el, done) {
+    enter(el) {
       console.log("enter event fired");
-      const spinning = [
-        { transform: "rotate(360deg) scale(0)" },
-        { transform: "rotate(0) scale(1)" },
-      ];
-
-      const timing = {
-        duration: 2000,
-        iterations: 1,
-      };
-      const myanimation = el.animate(spinning, timing);
-      myanimation.onfinish = () => {
-        done();
-      };
     },
     afterEnter(el) {
       console.log("after enter event fired");
@@ -127,22 +114,8 @@ export default {
     beforeLeave(el) {
       console.log("before leave event fired");
     },
-    leave(el, done) {
+    leave(el) {
       console.log("leave event fired");
-
-      const spinning = [
-        { transform: "rotate(0) scale(1)" },
-        { transform: "rotate(360deg) scale(0)" },
-      ];
-
-      const timing = {
-        duration: 2000,
-        iterations: 1,
-      };
-      const myanimation = el.animate(spinning, timing);
-      myanimation.onfinish = () => {
-        done();
-      };
     },
     afterLeave(el) {
       console.log("after leave event fired");
