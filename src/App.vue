@@ -32,6 +32,23 @@
   <keep-alive>
     <component :is="componentName"></component>
   </keep-alive>
+
+  <!-- Transitions and Animations -->
+  <button @click="flag = !flag">Toggle hello</button>
+  <!-- mode determines the order of animation by default it's in-out -->
+  <!-- <transition name="woola" mode="out-in">
+    <h2 v-if="flag" key="main">Hello</h2>
+    <h2 v-else key="secondary">Another Hello</h2>
+  </transition> -->
+
+
+<!-- Animating with CSS Animations -->
+<!-- https://vuejs.org/guide/built-ins/transition#using-transitions-and-animations-together -->
+<!-- adding `appear` so that animation plays on the first load -->
+<transition name="zoom" type="animation" appear>
+  <h2 v-if="flag">Animating with CSS</h2>
+</transition>
+
 </template>
 
 <script>
@@ -55,6 +72,7 @@ export default {
       age: 40,
       helpText: "This is a form",
       componentName: "home",
+      flag: true,
     };
   },
   methods: {
@@ -68,3 +86,56 @@ export default {
   },
 };
 </script>
+
+<!-- enter-from;enter-to;enter-active && leave-from; leave-to;leave-active -->
+<style>
+
+
+/* First Animation */
+.woola-enter-from {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+.woola-enter-active {
+  transition: all 0.5s linear;
+}
+.woola-leave-to {
+  transition: all 0.25s linear;
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+
+/* Second Animation */
+h2{
+  padding:20px;
+  width:250px;
+  margin:20px;
+}
+@keyframes zoom-in{
+from{
+  transform:scale(0,0)
+} to{
+  transform:scale(1,1)
+}
+}
+@keyframes zoom-out{
+from{
+  transform:scale(1,1)
+} to{
+  transform:scale(0,0)
+}
+}
+.zoom-enter-active{
+  animation:zoom-in 1s linear forwards;
+  transition: all 5s linear;
+}
+.zoom-leave-active{
+  animation:zoom-out 1s linear forwards;
+  transition: all 5s linear;
+}
+.zoom-enter-from, .zoom-leave-to{
+  opacity:0
+}
+
+</style>
