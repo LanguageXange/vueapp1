@@ -52,7 +52,7 @@
   <!-- Web Animations API - https://developer.mozilla.org/en-US/docs/Web/API/Element/animate -->
   <!-- :css-"false" tells Vue that don't check for CSS animation skip to use JS animation -->
   <!-- if using both CSS and JS we can remove 'done' in enter and leave function and Vue will use the CSS duration -->
-  <transition
+  <!-- <transition
     @before-enter="beforeEnter"
     @enter="enter"
     @after-enter="afterEnter"
@@ -65,7 +65,18 @@
     name="woola"
   >
     <h2 v-if="flag">Animating with JS & CSS</h2>
-  </transition>
+  </transition> -->
+
+  <!-- Animating a List with transition-group -->
+  <button @click="addItem">Add Item</button>
+
+  <ul>
+    <transition-group name="woola">
+      <li v-for="(item, index) in items" :key="item" @click="removeItem(index)">
+        {{ item }}
+      </li>
+    </transition-group>
+  </ul>
 </template>
 
 <script>
@@ -90,9 +101,18 @@ export default {
       helpText: "This is a form",
       componentName: "home",
       flag: true,
+      items: ["apple", "banana", "oranges", "grapes"],
     };
   },
   methods: {
+    addItem() {
+      const randomNum = Math.floor(Math.random() * 200 + 1);
+      const randomIndex = Math.floor(Math.random() * this.items.length);
+      this.items.splice(randomIndex, 0, randomNum);
+    },
+    removeItem(id) {
+      this.items.splice(id, 1);
+    },
     updateAge(num) {
       this.age += num;
     },
@@ -146,6 +166,21 @@ export default {
   transform: translateY(-20px);
 }
 
+/* for smoother list animation   */
+/* transform property is automatically applied to element that's moving */
+/* when adding new item, that item occupies space so other elments needs moving */
+.woola-move {
+  transition: all 1s linear;
+}
+/* when removing the element, the animation takes place first and the it's removed */
+/* as it's animating the element still occupies the space meaning that other elements don't need to move */
+/* that's why the transform property doesn't have to change */
+/* SOLUTION */
+/* adding position absolute so that the element will give up the space making other elements to move up*/
+.woola-leave-active {
+  position: absolute;
+}
+
 /* Second Animation */
 h2 {
   padding: 20px;
@@ -179,5 +214,15 @@ h2 {
 .zoom-enter-from,
 .zoom-leave-to {
   opacity: 0;
+}
+
+li {
+  font-size: 25px;
+  cursor: pointer;
+  width: max-content;
+
+  &:hover {
+    background-color: #eee;
+  }
 }
 </style>
