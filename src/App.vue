@@ -41,14 +41,31 @@
     <h2 v-else key="secondary">Another Hello</h2>
   </transition> -->
 
-
-<!-- Animating with CSS Animations -->
-<!-- https://vuejs.org/guide/built-ins/transition#using-transitions-and-animations-together -->
-<!-- adding `appear` so that animation plays on the first load -->
-<transition name="zoom" type="animation" appear>
+  <!-- Animating with CSS Animations -->
+  <!-- https://vuejs.org/guide/built-ins/transition#using-transitions-and-animations-together -->
+  <!-- adding `appear` so that animation plays on the first load -->
+  <!-- <transition name="zoom" type="animation" appear>
   <h2 v-if="flag">Animating with CSS</h2>
-</transition>
+</transition> -->
 
+  <!-- Animating with JS - functions defined in methods object -->
+  <!-- Web Animations API - https://developer.mozilla.org/en-US/docs/Web/API/Element/animate -->
+  <!-- :css-"false" tells Vue that don't check for CSS animation skip to use JS animation -->
+  <transition
+    @before-enter="beforeEnter"
+    @enter="enter"
+    @after-enter="afterEnter"
+    @before-leave="beforeLeave"
+    @leave="leave"
+    @after-leave="afterLeave"
+    @enter-cancelled="enterCancelled"
+    @leave-cancelled="leaveCancelled"
+
+    :css="false"  
+    
+  >
+    <h2 v-if="flag">Animating with JS</h2>
+  </transition>
 </template>
 
 <script>
@@ -83,14 +100,65 @@ export default {
     updateAgeCB(num) {
       this.age += num;
     },
+
+    // JS Animations
+    beforeEnter(el) {
+      console.log("before enter event fired");
+    },
+    enter(el, done) {
+      console.log("enter event fired");
+      const spinning = [
+        { transform: "rotate(360deg) scale(0)" },
+        { transform: "rotate(0) scale(1)" },
+      ];
+
+      const timing = {
+        duration: 2000,
+        iterations: 1,
+      };
+      const myanimation = el.animate(spinning, timing);
+      myanimation.onfinish = () => {
+        done();
+      };
+    },
+    afterEnter(el) {
+      console.log("after enter event fired");
+    },
+    beforeLeave(el) {
+      console.log("before leave event fired");
+    },
+    leave(el, done) {
+      console.log("leave event fired");
+
+      const spinning = [
+        { transform: "rotate(0) scale(1)" },
+        { transform: "rotate(360deg) scale(0)" },
+      ];
+
+      const timing = {
+        duration: 2000,
+        iterations: 1,
+      };
+      const myanimation = el.animate(spinning, timing);
+      myanimation.onfinish = () => {
+        done();
+      };
+    },
+    afterLeave(el) {
+      console.log("after leave event fired");
+    },
+    enterCancelled() {
+      console.log("enter cancelled event fired");
+    },
+    leaveCancelled() {
+      console.log("leave cancelled event fired");
+    },
   },
 };
 </script>
 
 <!-- enter-from;enter-to;enter-active && leave-from; leave-to;leave-active -->
 <style>
-
-
 /* First Animation */
 .woola-enter-from {
   opacity: 0;
@@ -105,37 +173,38 @@ export default {
   transform: translateY(-20px);
 }
 
-
 /* Second Animation */
-h2{
-  padding:20px;
-  width:250px;
-  margin:20px;
+h2 {
+  padding: 20px;
+  width: 250px;
+  margin: 20px;
 }
-@keyframes zoom-in{
-from{
-  transform:scale(0,0)
-} to{
-  transform:scale(1,1)
+@keyframes zoom-in {
+  from {
+    transform: scale(0, 0);
+  }
+  to {
+    transform: scale(1, 1);
+  }
 }
+@keyframes zoom-out {
+  from {
+    transform: scale(1, 1);
+  }
+  to {
+    transform: scale(0, 0);
+  }
 }
-@keyframes zoom-out{
-from{
-  transform:scale(1,1)
-} to{
-  transform:scale(0,0)
-}
-}
-.zoom-enter-active{
-  animation:zoom-in 1s linear forwards;
+.zoom-enter-active {
+  animation: zoom-in 1s linear forwards;
   transition: all 5s linear;
 }
-.zoom-leave-active{
-  animation:zoom-out 1s linear forwards;
+.zoom-leave-active {
+  animation: zoom-out 1s linear forwards;
   transition: all 5s linear;
 }
-.zoom-enter-from, .zoom-leave-to{
-  opacity:0
+.zoom-enter-from,
+.zoom-leave-to {
+  opacity: 0;
 }
-
 </style>
